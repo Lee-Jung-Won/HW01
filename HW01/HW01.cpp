@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 
+void usePotion(int count, int* p_HPPotion, int* p_MPPotion);
 void setPotion(int count, int* p_HPPotion, int* p_MPPotion);
 void RefillPotion(int count, int* p_HPPotion, int* p_MPPotion);
 void Upabil(int a, struct info* infop);
@@ -12,9 +13,9 @@ int Startsystem(struct info* infop);
 
 typedef struct info
 {
-	int cinfo[5]; // 1.HP 2.MP 3.공 4.방 5.렙
-	int cabil[4]; // 1. str 2. dex 3. int 4. luk
-	int cinven[2]; // 1. hp포션 2. mp포션
+	int cinfo[5]; // 필수 구현 기능 1.HP 2.MP 3.공 4.방 5.렙
+	int cabil[4]; // 도전 기능 확장 1. str 2. dex 3. int 4. luk
+	int cinven[2]; // hp포션 mp포션
 
 } info_t;
 
@@ -50,30 +51,40 @@ int main(void)
 }
 
 
-int Startsystem(struct info* infop)
+int Startsystem(struct info* infop) //캐릭성장함수
 {
 	int Num, Cnum, abilplus;
 	srand((unsigned)time(NULL));
 
-	if (infop->cinfo[0] == 0)
+	if (infop->cinfo[0] == 0) //초기입력여부
 	{
 		do
 		{
-			printf("HP와 MP를 입력해주세요: ");
+			printf("HP와 MP를 입력해주세요: "); //  필수 구현 기능 2-1
 			scanf_s("%d %d", &(infop->cinfo[0]), &(infop->cinfo[1]));
-			if (infop->cinfo[0] <= 50 || infop->cinfo[1] <= 50)
+			if (infop->cinfo[0] <= 50 || infop->cinfo[1] <= 50) // 필수 구현 기능 2-2
 			{
 				printf("HP나 MP의 값이 너무 작습니다. 다시 입력해주세요.\n");
 			}
-			//infop->hp = h; infop->mp = m; //? scanf는 주소를 받는 얜데 왜 infop.hp이거 안됨?
+			
 		} while (infop->cinfo[0] <= 50 || infop->cinfo[1] <= 50);
-		printf("공격력과 방어력을 입력해주세요: ");
-		scanf_s("%d %d", &(infop->cinfo[2]), &(infop->cinfo[3]));
+
+		do
+		{
+			printf("공격력과 방어력을 입력해주세요: "); // 필수 구현 기능 2-1
+			scanf_s("%d %d", &(infop->cinfo[2]), &(infop->cinfo[3]));
+			if (infop->cinfo[2] <= 0 || infop->cinfo[3] <= 0) // 필수 구현 기능 2-3
+			{
+				printf("공격력이나 방어력의 값이 너무 작습니다. 다시 입력해주세요.\n");
+			}
+
+		} while (infop->cinfo[2] <= 0 || infop->cinfo[3] <= 0);
+
 
 		infop->cinfo[4] = 1;
 		
 		printf("* 포션이 지급되었습니다. (HP, MP 포션 각 5개)\n");
-		infop->cinven[0] = 5; infop->cinven[1] = 5; // 뭐지 배열은 특이하게 취급하나
+		setPotion(5, &(infop->cinven[0]), &(infop->cinven[1])); // 뭐지 배열은 특이하게 취급하나
 	}
 
 	printf("=============================================\n");
@@ -81,26 +92,27 @@ int Startsystem(struct info* infop)
 	printf("<스탯  관리 시스템>\n");
 	printf("1. HP UP\n2. MP UP\n3. 공격력 UP\n4. 방어력 UP\n5. 현재 능력치\n6. Level UP\n7. 캐릭터 선택\n0. 나가기\n");
 
-	do
+	do // 필수 구현 기능 3
 	{
 		printf("스탯관리 번호를 선택해주세요: ");
 		scanf_s("%d", &Num);
 
 
-		switch (Num)
+		switch (Num) // 필수 구현 기능 4-2 : 스탯증가
 		{
 		case 1:        //hp 증가
 			if (infop->cinven[0] > 0) //hp포션의 유무
 			{
 				infop->cinfo[0] = infop->cinfo[0] + 20;
 
-				setPotion(1, &(infop->cinven[0]), &(infop->cinven[1])); // count = 1 > hp
+				usePotion(1, &(infop->cinven[0]), &(infop->cinven[1])); // count = 1 > hp
 				printf("* HP가 20 증가되었습니다. 포션이 1개 차감됩니다.\n현재 HP: %d\n남은 포션 수: %d\n", infop->cinfo[0], infop->cinven[0]);
 			}
 			else
 			{
 				printf("HP포션이 부족합니다.\nHP포션을 3개 충전합니다.\n");
 				RefillPotion(1, &(infop->cinven[0]), &(infop->cinven[1]));
+				printf("* 현재 HP포션 : %d - MP포션 : %d\n", infop->cinven[0], infop->cinven[1]);
 			}
 			break;
 		case 2:        //mp 증가
@@ -108,13 +120,14 @@ int Startsystem(struct info* infop)
 			{
 				infop->cinfo[1] = infop->cinfo[1] + 20;
 
-				setPotion(2, &(infop->cinven[0]), &(infop->cinven[1])); // count = 2 > mp
+				usePotion(2, &(infop->cinven[0]), &(infop->cinven[1])); // count = 2 > mp
 				printf("* MP가 20 증가되었습니다. 포션이 1개 차감됩니다.\n현재 HP: %d\n남은 포션 수: %d\n", infop->cinfo[1], infop->cinven[1]);
 			}
 			else
 			{
 				printf("MP포션이 부족합니다.\nMP포션을 3개 충전합니다.\n");
 				RefillPotion(2, &(infop->cinven[0]), &(infop->cinven[1]));
+				printf("* 현재 HP포션 : %d - MP포션 : %d\n", infop->cinven[0], infop->cinven[1]);
 			}
 			break;
 		case 3:        //공 증가
@@ -125,13 +138,13 @@ int Startsystem(struct info* infop)
 			infop->cinfo[3] = infop->cinfo[3] * 2;
 			printf("* 방어력이 2배로 증가되었습니다.\n현재 방어력: %d\n", infop->cinfo[3]);
 			break;
-		case 5:        //능력치
+		case 5:        //능력치 // 도전 구현 기능 3-4
 			printf("* HP : %d, MP : %d, 공격력 : %d, 방어력 : %d, LEVEL : %d\n", infop->cinfo[0], infop->cinfo[1], infop->cinfo[2], infop->cinfo[3], infop->cinfo[4]);
 			printf("남은 포션 > HP포션 : %d, MP포션 : %d\n", infop->cinven[0], infop->cinven[1]);
 			break;
-		case 6:        //lv 증가
+		case 6:        //lv 증가 // 고전 구현 기능 1
 
-			setPotion(3, &(infop->cinven[0]), &(infop->cinven[1])); //포션증가 각 +1
+			usePotion(3, &(infop->cinven[0]), &(infop->cinven[1])); //포션증가 각 +1
 			infop->cinfo[4]++; // 레벨증가
 			printf("* 레벨업! 현재 : %d - HP/MP 포션이 지급됩니다.\n남은 HP/MP 포션 수 : %d/%d\n", infop->cinfo[4], infop->cinven[0], infop->cinven[1]);
 			printf("=================================================\n");
@@ -153,7 +166,14 @@ int Startsystem(struct info* infop)
 	return Cnum;
 }
 
-void setPotion(int count, int* p_HPPotion, int* p_MPPotion)
+void setPotion(int count, int* p_HPPotion, int* p_MPPotion) // 필수 구현 기능 4-1
+{
+	*p_HPPotion = count;
+	*p_MPPotion = count;
+}
+
+
+void usePotion(int count, int* p_HPPotion, int* p_MPPotion) 
 {
 	switch (count) {
 	case 1:
