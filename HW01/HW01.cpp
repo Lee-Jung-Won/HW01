@@ -47,6 +47,9 @@ int main(void)
 	} while (CChange != 0);
 
 	printf("프로그램을 종료합니다.\n");
+
+	free(infop);
+
 	return 0;
 }
 
