@@ -1,14 +1,11 @@
 ﻿#include <iostream>
 #include "Player.h"
-#include "Warrior.h"
+#include "Warrior.h" 
 #include "Magician.h"
 #include "Thief.h"
 #include "Archer.h"
 #include "Monster.h"
 
-//using namespace std;
-
-// main
 int main() {
     string jobs[] = { "전사", "마법사", "도적", "궁수" };
     int job_choice = 0;
@@ -56,9 +53,6 @@ int main() {
         }
     } while ((job_choice < 1) || (job_choice > 4));
 
-    //cin.clear();
-    //cin.ignore(LLONG_MAX, '/0');
-
     player->attack();
 
     cout << "* 몬스터이름을 입력해주세요: ";
@@ -68,20 +62,23 @@ int main() {
     cout << endl;
     cout <<"Mon: " << monster->M_getname() << " VS User: " << player->getNickname() << "의 대결 !" << endl;
 
-    monster->M_sethp(50);
+    monster->M_sethp(30);
     player->printPlayerStatus();
 
+    int iswinp = player->attack(monster);
+    int iswinm = monster->attack(player);
     do
     {
-
-    } while (player->attack(monster)); // Player Win Sinario
-
-    //monster->M_setpower(70);
-    //do
-    //{
-
-    //} while (monster->attack(player)); // Monster Win Sinario
-
+        iswinp = player->attack(monster);
+        if (iswinp * iswinm)
+        {
+        }
+        else
+        {
+            break;
+        }
+        iswinm = monster->attack(player);
+    } while ( iswinp * iswinm );
 
     if (player != nullptr)
     {
