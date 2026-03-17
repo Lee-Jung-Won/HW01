@@ -21,3 +21,9 @@ void Item::Clear()
 	name_ = "";
 	price_ = 0;
 }
+
+std::ostream& operator<<(std::ostream& InOStream, const Item& ItemRef)
+{
+	InOStream << "( " << ItemRef.GetName() << " , " << ItemRef.GetPrice() << " )";
+	return InOStream;
+}

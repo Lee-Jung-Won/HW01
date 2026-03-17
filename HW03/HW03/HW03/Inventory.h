@@ -57,13 +57,7 @@ Inventory<Tp>::Inventory(Inventory<Tp>& copyone)
 	{
 		item_[i] = copyone.item_[i];
 	}
-	//Tp* tempitem = new Tp[copyone.capacity_];
-	//for (int i = 0; i < size_; i++)
-	//{
-	//	tempitem[i] = copyone.item_[i];
-	//}
-	//delete[] item_;
-	//item_ = tempitem;
+
 }
 
 template  <typename Tp>
@@ -101,6 +95,8 @@ void Inventory<Tp>::Additem(const Tp& in_item)
 		std::cout << "Can't be loaded... It's Full now" << std::endl;
 		std::cout << "storage is upgrading X2..." << std::endl;
 		Resize((capacity_ * 2));
+		item_[size_] = in_item;
+		size_++;
 	}
 }
 
@@ -145,24 +141,17 @@ void Inventory<Tp>::Assign(const Inventory<Tp>& other)
 {
 	if (other.size_ > capacity_)
 	{
-		Tp* tempitem = new Tp[capacity_];
-		for (int i = 0; i < capacity_; i++)
+		size_ = 0;
+		for (int i = size_; i < other.size_; i++)
 		{
-			tempitem[i] = other.item_[i];
+			Additem(other.item_[i]);
 		}
-		delete[] item_;
-		item_ = tempitem;
 
-		std::cout << "Assign Completed... Lost data detected : " << other.size_ - capacity_ << std::endl;
-		size_ = capacity_;
-		std::cout << "Size : " << capacity_ << "\tCap : " << capacity_ << "\t >> FULL NOW " << std::endl << std::endl;
+		std::cout << "Assign Completed..." << std::endl;
+		std::cout << "Size : " << size_ << "\tCap : " << capacity_ << std::endl;
 	}
 	else
 	{
-		for (int i = 0; i < size_; i++)
-		{
-			item_[i].Clear();
-		} // 어차피 size가 조절되서 입력만 하는거라 clear할필요없긴함
 
 		for (int i = 0; i < other.size_; i++)
 		{
@@ -199,8 +188,7 @@ void const Inventory<Tp>::PrintAllItems()
 	{
 		for (int i = 0; i < size_; i++)
 		{
-			std::cout << item_[i].GetName() << " " << item_[i].GetPrice() << std::endl;
-
+			std::cout << item_[i] << std::endl;
 		}
 		std::cout << "Print Completed..." << std::endl;
 		std::cout << "Size : " << size_ << "\tCapacity : " << capacity_ << std::endl << std::endl;

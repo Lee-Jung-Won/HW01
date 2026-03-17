@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 
 class Item
@@ -11,4 +12,7 @@ public:
 	const std::string& GetName() const;
 	int GetPrice() const;
 	void Clear();
+
+	friend std::ostream& operator<<(std::ostream& InOStream, const Item& ItemRef);
+
 };

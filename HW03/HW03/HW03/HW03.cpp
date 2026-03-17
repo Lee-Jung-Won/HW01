@@ -22,9 +22,11 @@ int main()
             itemInventory->Additem(Item("Item" + std::to_string(i), i * 100));
         }
 
+        itemInventory->PrintAllItems();
+
         delete itemInventory;
         itemInventory = nullptr;
- 
+
         return 0;
     }
 
